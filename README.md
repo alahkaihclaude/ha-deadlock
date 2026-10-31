@@ -6,6 +6,10 @@ A Home Assistant integration that tracks Deadlock players. Each player you add b
 
 ### With HACS (recommended)
 
+[![Open your Home Assistant instance and open this repository in HACS.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=alahkaihclaude&repository=ha-deadlock&category=integration)
+
+Click the button above, or do it by hand:
+
 1. In Home Assistant, open **HACS**, then the ⋮ menu, then **Custom repositories**.
 2. Add `https://github.com/alahkaihclaude/ha-deadlock` with type **Integration**.
 3. Search HACS for **Deadlock Players**, download it, and restart Home Assistant.
