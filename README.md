@@ -34,7 +34,7 @@ This creates the entity `event.alice_match_result`. It also creates sensors that
 
 ## Use it in an automation
 
-The entity always shows the most recent match's stats as attributes, even before its first event, so the automation editor can list them. Every new match fires the event and updates them: `event_type` (always `finished`), `result` (`win`/`loss`), `match_id`, `hero_id`, `player_kills`, `player_deaths`, `player_assists`, `net_worth` and `match_duration_s`.
+The entity always shows the most recent match's stats as attributes, even before its first event, so the automation editor can list them. Every new match fires the event and updates them: `event_type` (always `finished`), `result` (`win`/`loss`), `match_id`, `hero_id`, `player_kills`, `player_deaths`, `player_assists`, `net_worth` and `match_duration_min`.
 
 ```yaml
 automation:
@@ -77,7 +77,7 @@ automation:
           message: "Alice died {{ trigger.to_state.attributes.player_deaths }} times 💀"
 ```
 
-Available attributes: `result` (`win`/`loss`), `player_kills`, `player_deaths`, `player_assists`, `net_worth`, `match_duration_s` (seconds) and `hero_id` (a number, not the hero's name). Add several conditions to combine them, for example 10+ kills **and** a win.
+Available attributes: `result` (`win`/`loss`), `player_kills`, `player_deaths`, `player_assists`, `net_worth`, `match_duration_min` (minutes) and `hero_id` (a number, not the hero's name). Add several conditions to combine them, for example 10+ kills **and** a win.
 
 ## Releasing an update
 

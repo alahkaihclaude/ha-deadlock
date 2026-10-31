@@ -6,11 +6,15 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from . import DOMAIN
 from .matches import new_matches, won
 
-ATTRS = ("match_id", "hero_id", "player_kills", "player_deaths", "player_assists", "net_worth", "match_duration_s")
+ATTRS = ("match_id", "hero_id", "player_kills", "player_deaths", "player_assists", "net_worth")
 
 
 def stats(match: dict) -> dict:
-    return {"result": "win" if won(match) else "loss", **{k: match.get(k) for k in ATTRS}}
+    return {
+        "result": "win" if won(match) else "loss",
+        **{k: match.get(k) for k in ATTRS},
+        "match_duration_min": round(match["match_duration_s"] / 60),
+    }
 
 
 async def async_setup_entry(hass, entry, async_add_entities):
