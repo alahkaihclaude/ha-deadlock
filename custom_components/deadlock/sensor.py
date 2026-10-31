@@ -46,8 +46,9 @@ SENSORS = (
         key="match_duration_s",
         name="Last match duration",
         device_class=SensorDeviceClass.DURATION,
-        native_unit_of_measurement=UnitOfTime.SECONDS,
+        native_unit_of_measurement=UnitOfTime.MINUTES,
         state_class=STAT,
+        value=lambda m: round(m["match_duration_s"] / 60),
     ),
 )
 
