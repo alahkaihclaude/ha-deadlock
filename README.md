@@ -54,6 +54,10 @@ automation:
             trigger.to_state.attributes.player_assists }}
 ```
 
+## Releasing an update
+
+Bump `"version"` in `custom_components/deadlock/manifest.json` and push to `main`. The Release workflow runs the tests and publishes a `v<version>` release. HACS then offers the update under **Settings → Updates**. Restart Home Assistant after updating.
+
 ## Known limits
 
 - Matches that finish while Home Assistant is off never fire an event. After a restart, tracking starts from the newest match.

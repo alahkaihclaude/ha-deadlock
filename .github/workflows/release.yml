@@ -1,0 +1,28 @@
+# Bump "version" in manifest.json and push to main: this tests and publishes a release so HACS offers the update.
+name: Release
+
+on:
+  push:
+    branches: [main]
+    paths: [custom_components/deadlock/manifest.json]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 test_matches.py
+      - name: Create release if this version is new
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          v="v$(jq -r .version custom_components/deadlock/manifest.json)"
+          if gh release view "$v" >/dev/null 2>&1; then
+            echo "$v is already released"
+          else
+            gh release create "$v" --target "$GITHUB_SHA" --title "$v" --generate-notes
+          fi
