@@ -1,0 +1,19 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Track a Deadlock player",
+        "data": {
+          "name": "Name",
+          "account_id": "Steam ID (Steam32, SteamID64 or [U:1:…])"
+        }
+      }
+    },
+    "error": {
+      "invalid_id": "That doesn't look like a Steam ID."
+    },
+    "abort": {
+      "already_configured": "This player is already tracked."
+    }
+  }
+}

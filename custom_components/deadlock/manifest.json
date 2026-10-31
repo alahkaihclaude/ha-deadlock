@@ -1,0 +1,11 @@
+{
+  "domain": "deadlock",
+  "name": "Deadlock Players",
+  "codeowners": [],
+  "config_flow": true,
+  "documentation": "https://api.deadlock-api.com/docs",
+  "integration_type": "device",
+  "iot_class": "cloud_polling",
+  "requirements": [],
+  "version": "0.1.0"
+}
