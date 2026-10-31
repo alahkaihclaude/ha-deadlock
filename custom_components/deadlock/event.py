@@ -25,11 +25,19 @@ class MatchResult(CoordinatorEntity, EventEntity):
             identifiers={(DOMAIN, entry.unique_id)}, name=entry.title, manufacturer="Deadlock API"
         )
         # shortcut: starts from the newest match at startup, so games finished while HA was down never fire; persist last_id if that matters
-        self._last_id = max((m["match_id"] for m in coordinator.data), default=0)
+        self._last_match = max(coordinator.data, key=lambda m: m["match_id"], default=None)
+        self._last_id = self._last_match["match_id"] if self._last_match else 0
+
+    @property
+    def extra_state_attributes(self):
+        """The newest match's stats, shown even before the first event so the UI can offer them."""
+        m = self._last_match
+        return m and {"result": "win" if won(m) else "loss", **{k: m.get(k) for k in ATTRS}}
 
     @callback
     def _handle_coordinator_update(self) -> None:
         for match in new_matches(self.coordinator.data, self._last_id):
+            self._last_match = match  # before writing, so the stats match the event that fires
             self._trigger_event("win" if won(match) else "loss", {k: match.get(k) for k in ATTRS})
             self._last_id = match["match_id"]
             self.async_write_ha_state()  # once per match, so two games in one poll fire two automations

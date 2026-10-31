@@ -34,7 +34,7 @@ This creates the entity `event.alice_match_result`.
 
 ## Use it in an automation
 
-Every match fires the event with these attributes: `event_type` (`win`/`loss`), `match_id`, `hero_id`, `player_kills`, `player_deaths`, `player_assists`, `net_worth` and `match_duration_s`.
+The entity always shows the most recent match's stats as attributes, even before its first event, so the automation editor can list them. Every new match fires the event and updates them: `event_type` and `result` (`win`/`loss`), `match_id`, `hero_id`, `player_kills`, `player_deaths`, `player_assists`, `net_worth` and `match_duration_s`.
 
 ```yaml
 automation:
