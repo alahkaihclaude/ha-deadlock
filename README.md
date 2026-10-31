@@ -1,6 +1,6 @@
 # Deadlock Players
 
-A Home Assistant integration that tracks Deadlock players. Each player you add becomes a device with a **Match result** event entity. It fires `win` or `loss` each time that player finishes a match. It polls [deadlock-api.com](https://api.deadlock-api.com/docs) every 5 minutes.
+A Home Assistant integration that tracks Deadlock players. Each player you add becomes a device with a **Match result** event entity. It fires a `finished` event each time that player finishes a match, with the result (`win`/`loss`) and stats attached. It polls [deadlock-api.com](https://api.deadlock-api.com/docs) every 5 minutes.
 
 ## Install
 
@@ -30,11 +30,11 @@ Click the button above, or do it by hand:
    You can find a Steam ID on sites like steamid.io, or in the player's profile URL.
 3. Repeat for each player you want to track.
 
-This creates the entity `event.alice_match_result`. It also creates sensors that show the most recent match on the device page and on dashboards: result, kills, deaths, assists, net worth and duration (for example `sensor.alice_last_match_kills`). For automations, use the event entity below instead: a sensor doesn't change when two matches in a row have the same value.
+This creates the entity `event.alice_match_result`. It also creates sensors that show the most recent match on the device page and on dashboards: when it finished (shown as "x minutes ago"), result, kills, deaths, assists, net worth and duration (for example `sensor.alice_last_match_kills`). For automations, use the event entity below instead: a sensor doesn't change when two matches in a row have the same value.
 
 ## Use it in an automation
 
-The entity always shows the most recent match's stats as attributes, even before its first event, so the automation editor can list them. Every new match fires the event and updates them: `event_type` and `result` (`win`/`loss`), `match_id`, `hero_id`, `player_kills`, `player_deaths`, `player_assists`, `net_worth` and `match_duration_s`.
+The entity always shows the most recent match's stats as attributes, even before its first event, so the automation editor can list them. Every new match fires the event and updates them: `event_type` (always `finished`), `result` (`win`/`loss`), `match_id`, `hero_id`, `player_kills`, `player_deaths`, `player_assists`, `net_worth` and `match_duration_s`.
 
 ```yaml
 automation:
@@ -45,7 +45,7 @@ automation:
         not_from: [unavailable, unknown]  # skip the restore after a restart
     conditions:
       - condition: template
-        value_template: "{{ trigger.to_state.attributes.event_type == 'win' }}"
+        value_template: "{{ trigger.to_state.attributes.result == 'win' }}"
     actions:
       - action: notify.notify
         data:
@@ -77,7 +77,7 @@ automation:
           message: "Alice died {{ trigger.to_state.attributes.player_deaths }} times 💀"
 ```
 
-Available attributes: `player_kills`, `player_deaths`, `player_assists`, `net_worth`, `match_duration_s` (seconds) and `hero_id` (a number, not the hero's name). Add several conditions to combine them, for example 10+ kills **and** a win.
+Available attributes: `result` (`win`/`loss`), `player_kills`, `player_deaths`, `player_assists`, `net_worth`, `match_duration_s` (seconds) and `hero_id` (a number, not the hero's name). Add several conditions to combine them, for example 10+ kills **and** a win.
 
 ## Releasing an update
 

@@ -2,6 +2,7 @@
 
 from collections.abc import Callable
 from dataclasses import dataclass
+from datetime import UTC, datetime
 
 from homeassistant.components.sensor import (
     SensorDeviceClass,
@@ -24,6 +25,12 @@ class StatDescription(SensorEntityDescription):
 
 STAT = SensorStateClass.MEASUREMENT
 SENSORS = (
+    StatDescription(
+        key="finished",
+        name="Last match finished",
+        device_class=SensorDeviceClass.TIMESTAMP,  # the UI shows this as "x minutes ago"
+        value=lambda m: datetime.fromtimestamp(m["start_time"] + m["match_duration_s"], UTC),
+    ),
     StatDescription(
         key="result",
         name="Last match result",

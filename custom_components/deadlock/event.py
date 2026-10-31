@@ -9,6 +9,10 @@ from .matches import new_matches, won
 ATTRS = ("match_id", "hero_id", "player_kills", "player_deaths", "player_assists", "net_worth", "match_duration_s")
 
 
+def stats(match: dict) -> dict:
+    return {"result": "win" if won(match) else "loss", **{k: match.get(k) for k in ATTRS}}
+
+
 async def async_setup_entry(hass, entry, async_add_entities):
     async_add_entities([MatchResult(entry.runtime_data, entry)])
 
@@ -16,7 +20,7 @@ async def async_setup_entry(hass, entry, async_add_entities):
 class MatchResult(CoordinatorEntity, EventEntity):
     _attr_has_entity_name = True
     _attr_name = "Match result"
-    _attr_event_types = ["win", "loss"]
+    _attr_event_types = ["finished"]
 
     def __init__(self, coordinator, entry):
         super().__init__(coordinator)
@@ -31,13 +35,12 @@ class MatchResult(CoordinatorEntity, EventEntity):
     @property
     def extra_state_attributes(self):
         """The newest match's stats, shown even before the first event so the UI can offer them."""
-        m = self._last_match
-        return m and {"result": "win" if won(m) else "loss", **{k: m.get(k) for k in ATTRS}}
+        return self._last_match and stats(self._last_match)
 
     @callback
     def _handle_coordinator_update(self) -> None:
         for match in new_matches(self.coordinator.data, self._last_id):
             self._last_match = match  # before writing, so the stats match the event that fires
-            self._trigger_event("win" if won(match) else "loss", {k: match.get(k) for k in ATTRS})
+            self._trigger_event("finished", stats(match))
             self._last_id = match["match_id"]
             self.async_write_ha_state()  # once per match, so two games in one poll fire two automations
