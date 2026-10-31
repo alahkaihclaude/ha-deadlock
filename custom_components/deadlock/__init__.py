@@ -12,7 +12,7 @@ from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, Upda
 
 DOMAIN = "deadlock"
 URL = "https://api.deadlock-api.com/v1/players/{}/match-history"
-PLATFORMS = ["event"]
+PLATFORMS = ["event", "sensor"]
 _LOGGER = logging.getLogger(__name__)
 
 

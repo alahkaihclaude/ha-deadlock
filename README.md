@@ -30,7 +30,7 @@ Click the button above, or do it by hand:
    You can find a Steam ID on sites like steamid.io, or in the player's profile URL.
 3. Repeat for each player you want to track.
 
-This creates the entity `event.alice_match_result`.
+This creates the entity `event.alice_match_result`. It also creates sensors that show the most recent match on the device page and on dashboards: result, kills, deaths, assists, net worth and duration (for example `sensor.alice_last_match_kills`). For automations, use the event entity below instead: a sensor doesn't change when two matches in a row have the same value.
 
 ## Use it in an automation
 
