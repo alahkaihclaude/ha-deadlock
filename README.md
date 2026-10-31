@@ -42,6 +42,7 @@ automation:
     triggers:
       - trigger: state
         entity_id: event.alice_match_result
+        not_from: [unavailable, unknown]  # skip the restore after a restart
     conditions:
       - condition: template
         value_template: "{{ trigger.to_state.attributes.event_type == 'win' }}"
@@ -53,6 +54,30 @@ automation:
             trigger.to_state.attributes.player_deaths }}/{{
             trigger.to_state.attributes.player_assists }}
 ```
+
+### Trigger on kills, deaths, assists and other stats
+
+Use the same trigger and add a **Numeric state** condition on one of the attributes. In the automation editor, choose **Add condition → Entity → Numeric state**, pick the match result entity, and set **Attribute** to, for example, `player_deaths`. Each condition is checked once per match.
+
+```yaml
+automation:
+  - alias: "Alice had a rough game"
+    triggers:
+      - trigger: state
+        entity_id: event.alice_match_result
+        not_from: [unavailable, unknown]
+    conditions:
+      - condition: numeric_state
+        entity_id: event.alice_match_result
+        attribute: player_deaths
+        above: 9  # 10 or more deaths
+    actions:
+      - action: notify.notify
+        data:
+          message: "Alice died {{ trigger.to_state.attributes.player_deaths }} times 💀"
+```
+
+Available attributes: `player_kills`, `player_deaths`, `player_assists`, `net_worth`, `match_duration_s` (seconds) and `hero_id` (a number, not the hero's name). Add several conditions to combine them, for example 10+ kills **and** a win.
 
 ## Releasing an update
 
