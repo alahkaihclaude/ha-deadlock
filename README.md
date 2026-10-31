@@ -1,0 +1,56 @@
+# Deadlock Players
+
+A Home Assistant integration that tracks Deadlock players. Each player you add becomes a device with a **Match result** event entity. It fires `win` or `loss` each time that player finishes a match. It polls [deadlock-api.com](https://api.deadlock-api.com/docs) every 5 minutes.
+
+## Install
+
+### With HACS (recommended)
+
+1. In Home Assistant, open **HACS**, then the ⋮ menu, then **Custom repositories**.
+2. Add `https://github.com/alahkaihclaude/ha-deadlock` with type **Integration**.
+3. Search HACS for **Deadlock Players**, download it, and restart Home Assistant.
+
+### Manually
+
+1. Copy `custom_components/deadlock` into your Home Assistant `config/custom_components/` folder. You should end up with `config/custom_components/deadlock/manifest.json`.
+2. Restart Home Assistant.
+
+## Add a player
+
+1. Go to **Settings → Devices & services → Add integration** and pick **Deadlock Players**.
+2. Enter a name, such as `Alice`, and the player's Steam ID. Any of these formats works:
+   - a Steam32 ID: `388674065`
+   - a SteamID64: `76561198348939793`
+   - the `[U:1:388674065]` form
+
+   You can find a Steam ID on sites like steamid.io, or in the player's profile URL.
+3. Repeat for each player you want to track.
+
+This creates the entity `event.alice_match_result`.
+
+## Use it in an automation
+
+Every match fires the event with these attributes: `event_type` (`win`/`loss`), `match_id`, `hero_id`, `player_kills`, `player_deaths`, `player_assists`, `net_worth` and `match_duration_s`.
+
+```yaml
+automation:
+  - alias: "Alice won a Deadlock match"
+    triggers:
+      - trigger: state
+        entity_id: event.alice_match_result
+    conditions:
+      - condition: template
+        value_template: "{{ trigger.to_state.attributes.event_type == 'win' }}"
+    actions:
+      - action: notify.notify
+        data:
+          message: >
+            Alice won! {{ trigger.to_state.attributes.player_kills }}/{{
+            trigger.to_state.attributes.player_deaths }}/{{
+            trigger.to_state.attributes.player_assists }}
+```
+
+## Known limits
+
+- Matches that finish while Home Assistant is off never fire an event. After a restart, tracking starts from the newest match.
+- New matches show up within about 5 minutes, plus however long the API takes to list them.
